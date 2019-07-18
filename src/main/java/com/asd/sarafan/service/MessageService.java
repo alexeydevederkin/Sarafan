@@ -91,7 +91,13 @@ public class MessageService {
     }
 
     public Message update(Message messageFromDb, Message message) throws IOException {
-        BeanUtils.copyProperties(message, messageFromDb, "id");
+        // not copying child comments to deal with this error:
+        //   "A collection with cascade="all-delete-orphan" was no longer referenced by the owning entity instance"
+        //BeanUtils.copyProperties(message, messageFromDb, "id", "comments");
+
+        // that was also not good (author lost) - so copy only new text
+        messageFromDb.setText(message.getText());
+
         fillMeta(messageFromDb);
         Message updatedMessage = messageRepo.save(messageFromDb);
 
