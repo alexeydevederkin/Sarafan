@@ -16,8 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 @Data
 @JsonIdentityInfo(
-        property = "id",
-        generator = ObjectIdGenerators.PropertyGenerator.class
+        generator = ObjectIdGenerators.IntSequenceGenerator.class
 )
 public class Message {
 
