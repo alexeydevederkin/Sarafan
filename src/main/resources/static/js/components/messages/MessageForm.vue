@@ -32,14 +32,17 @@
         methods: {
             ...mapActions(['addMessageAction', 'updateMessageAction']),
             save() {
-                const message = {
-                    id: this.id,
-                    text: this.text
-                }
-
                 if (this.id) {
+                    const message = {
+                        id: this.id,
+                        text: this.text
+                    }
                     this.updateMessageAction(message)
                 } else {
+                    // fixing Jackson deserialization (id can't be == "")
+                    const message = {
+                        text: this.text
+                    }
                     this.addMessageAction(message)
                 }
 
