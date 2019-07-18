@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 
 @Service
 public class MessageService {
-    private static String URL_PATTERN = "https?:\\/\\/?[\\w\\d\\._\\-%\\/\\?=&#]+";
+    private static String URL_PATTERN = "https?://?[\\w\\d._\\-%/?=&#]+";
     private static String IMAGE_PATTERN = "\\.(jpeg|jpg|gif|png)$";
 
     private static Pattern URL_REGEX = Pattern.compile(URL_PATTERN, Pattern.CASE_INSENSITIVE);
