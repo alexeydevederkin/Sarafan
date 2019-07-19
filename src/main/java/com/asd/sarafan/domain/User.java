@@ -3,6 +3,7 @@ package com.asd.sarafan.domain;
 import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Table(name = "usr")
 @Data
 @EqualsAndHashCode(of = { "id" })
+@ToString(exclude = { "subscriptions", "subscribers" })
 public class User implements Serializable {
     @Id
     @JsonView(Views.IdName.class)
