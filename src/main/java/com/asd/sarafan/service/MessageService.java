@@ -40,7 +40,7 @@ public class MessageService {
     @Autowired
     public MessageService(MessageRepo messageRepo, WsSender wsSender) {
         this.messageRepo = messageRepo;
-        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.IdName.class);
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.FullMessage.class);
     }
 
 
