@@ -42,6 +42,8 @@ dependencies {
 
     implementation 'org.jsoup:jsoup:1.12.1'
 
+    implementation 'io.sentry:sentry-spring:1.7.23'
+
     //implementation('org.projectlombok:lombok')
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
