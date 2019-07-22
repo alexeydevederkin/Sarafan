@@ -15,20 +15,23 @@ export default new Vuex.Store({
         sortedMessages: state => (state.messages || []).sort((a, b) => -(a.id - b.id))
     },
     mutations: {
-        addMessageMutation(state, message) {
-            state.messages = [
-                ...state.messages,
-                message
-            ]
-        },
-        updateMessageMutation(state, message) {
+        addOrUpdateMessageMutation(state, message) {
             const updateIndex = state.messages.findIndex(item => item.id === message.id)
 
-            state.messages = [
-                ...state.messages.slice(0, updateIndex),
-                message,
-                ...state.messages.slice(updateIndex + 1)
-            ]
+            if (updateIndex > -1) {
+                // found message with the same id - update
+                state.messages = [
+                    ...state.messages.slice(0, updateIndex),
+                    message,
+                    ...state.messages.slice(updateIndex + 1)
+                ]
+            } else {
+                // not found message with the same id - add
+                state.messages = [
+                    ...state.messages,
+                    message
+                ]
+            }
         },
         removeMessageMutation(state, message) {
             const deletionIndex = state.messages.findIndex(item => item.id === message.id)
@@ -79,18 +82,12 @@ export default new Vuex.Store({
         async addMessageAction({commit, state}, message) {
             const result = await messagesApi.add(message)
             const data = await result.json()
-            const index = state.messages.findIndex(item => item.id === data.id)
-
-            if (index > -1) {
-                commit('updateMessageMutation', data)
-            } else {
-                commit('addMessageMutation', data)
-            }
+            commit('addOrUpdateMessageMutation', data)
         },
         async updateMessageAction({commit}, message) {
             const result = await messagesApi.update(message)
             const data = await result.json()
-            commit('updateMessageMutation', data)
+            commit('addOrUpdateMessageMutation', data)
         },
         async removeMessageAction({commit}, message) {
             const result = await messagesApi.remove(message.id)

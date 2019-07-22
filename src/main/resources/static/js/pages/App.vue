@@ -33,8 +33,7 @@
         computed: mapState(['profile']),
         methods: {
             ...mapMutations([
-                'addMessageMutation',
-                'updateMessageMutation',
+                'addOrUpdateMessageMutation',
                 'removeMessageMutation',
                 'addCommentMutation'
             ]),
@@ -50,10 +49,10 @@
                 if (data.objectType === 'MESSAGE') {
                     switch (data.eventType) {
                         case 'CREATE':
-                            this.addMessageMutation(data.body)
+                            this.addOrUpdateMessageMutation(data.body)
                             break
                         case 'UPDATE':
-                            this.updateMessageMutation(data.body)
+                            this.addOrUpdateMessageMutation(data.body)
                             break
                         case 'REMOVE':
                             this.removeMessageMutation(data.body)
