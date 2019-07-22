@@ -21,7 +21,7 @@
 
                             <router-link
                                     v-if="isMyProfile"
-                                    :to="`/subscriptions/${profile.id}`">
+                                    :to="`/subscribers/${profile.id}`">
                                 {{profile.subscribers && profile.subscribers.length}} subscribers
                             </router-link>
                             <v-flex v-else>
