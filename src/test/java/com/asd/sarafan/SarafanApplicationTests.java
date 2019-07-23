@@ -1,4 +1,4 @@
-package com.letscode.sarafan;
+package com.asd.sarafan;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

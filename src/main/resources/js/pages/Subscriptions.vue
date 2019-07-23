@@ -24,7 +24,7 @@
 
 <script>
     import profileApi from 'api/profile'
-    import UserLink from 'components/UserLink.vue'
+    import UserLink from '../components/UserLink.vue'
     export default {
         name: 'Subscriptions',
         components: {UserLink},
