@@ -45,6 +45,12 @@ export default new Vuex.Store({
         },
         addCommentMutation(state, comment) {
             const updateIndex = state.messages.findIndex(item => item.id === comment.message.id)
+
+            // comment for message which is not visible
+            if (updateIndex < 0) {
+                return
+            }
+
             const message = state.messages[updateIndex]
 
             if (!message.comments.find(it => it.id === comment.id)) {
