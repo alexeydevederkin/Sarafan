@@ -27,6 +27,12 @@ public class ProfileController {
         return user;
     }
 
+    @GetMapping
+    @JsonView(Views.IdName.class)
+    public List<User> getAllProfiles() {
+        return profileService.getAll();
+    }
+
     @PostMapping("change-subscription/{channelId}")
     @JsonView(Views.FullProfile.class)
     public User changeSubscription(
@@ -44,6 +50,12 @@ public class ProfileController {
     @JsonView(Views.IdName.class)
     public List<UserSubscription> subscribers(@PathVariable("channelId") User channel) {
         return profileService.getSubscribers(channel);
+    }
+
+    @GetMapping("get-subscriptions")
+    @JsonView(Views.IdName.class)
+    public List<UserSubscription> subscriptions(@AuthenticationPrincipal User user) {
+        return profileService.getSubscriptions(user);
     }
 
     @PostMapping("change-status/{subscriberId}")

@@ -3,6 +3,7 @@ package com.asd.sarafan.service;
 import com.asd.sarafan.domain.User;
 import com.asd.sarafan.domain.UserSubscription;
 import com.asd.sarafan.repo.UserDetailsRepo;
+import com.asd.sarafan.repo.UserRepo;
 import com.asd.sarafan.repo.UserSubscriptionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProfileService {
+    private final UserRepo userRepo;
     private final UserDetailsRepo userDetailsRepo;
     private final UserSubscriptionRepo userSubscriptionRepo;
 
     @Autowired
-    public ProfileService(UserDetailsRepo userDetailsRepo, UserSubscriptionRepo userSubscriptionRepo) {
+    public ProfileService(UserRepo userRepo, UserDetailsRepo userDetailsRepo, UserSubscriptionRepo userSubscriptionRepo) {
+        this.userRepo = userRepo;
         this.userDetailsRepo = userDetailsRepo;
         this.userSubscriptionRepo = userSubscriptionRepo;
     }
@@ -41,9 +44,17 @@ public class ProfileService {
         return userSubscriptionRepo.findByChannel(channel);
     }
 
+    public List<UserSubscription> getSubscriptions(User user) {
+        return userSubscriptionRepo.findBySubscriber(user);
+    }
+
     public UserSubscription changeSubscriptionStatus(User channel, User subscriber) {
         UserSubscription subscription = userSubscriptionRepo.findByChannelAndSubscriber(channel, subscriber);
         subscription.setActive(!subscription.isActive());
         return userSubscriptionRepo.save(subscription);
+    }
+
+    public List<User> getAll() {
+        return userRepo.findAll();
     }
 }
