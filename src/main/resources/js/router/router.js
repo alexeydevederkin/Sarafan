@@ -3,7 +3,8 @@ import VueRouter from 'vue-router'
 import MessagesList from '../pages/MessageList.vue'
 import Auth from '../pages/Auth.vue'
 import Profile from '../pages/Profile.vue'
-import Subscruptions from '../pages/Subscriptions.vue'
+import Subscriptions from '../pages/Subscriptions.vue'
+import Authors from '../pages/Authors.vue'
 
 Vue.use(VueRouter)
 
@@ -11,7 +12,8 @@ const routes = [
     { path: '/', component: MessagesList },
     { path: '/auth', component: Auth },
     { path: '/user/:id?', component: Profile },
-    { path: '/subscribers/:id', component: Subscruptions },
+    { path: '/subscribers/:id', component: Subscriptions },
+    { path: '/authors/', component: Authors },
     { path: '*', component: MessagesList },
 ]
 
