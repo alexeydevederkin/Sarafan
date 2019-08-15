@@ -51,10 +51,9 @@
             }
         },
         async beforeMount() {
-            const respAuthors = await profileApi.all()
-            let authorsList = await respAuthors.json()
+            const [respAuthors, respSubscriptions] = await Promise.all([profileApi.all(), profileApi.subscriptionsList()])
 
-            const respSubscriptions = await profileApi.subscriptionsList()
+            let authorsList = await respAuthors.json()
             const userSubscriptions = await respSubscriptions.json()
 
             let subscriptionsSet = new Set()
