@@ -57,13 +57,22 @@ public class MessageController {
     @JsonView(Views.FullMessage.class)
     public Message update(
             @PathVariable("id") Message messageFromDb,
-            @RequestBody Message message
+            @RequestBody Message message,
+            @AuthenticationPrincipal User user
     ) throws IOException {
-        return messageService.update(messageFromDb, message);
+        if (messageFromDb.getAuthor().equals(user)) {
+            return messageService.update(messageFromDb, message);
+        } else {
+            return message;
+        }
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") Message message) {
-        messageService.delete(message);
+    public void delete(
+            @PathVariable("id") Message message,
+            @AuthenticationPrincipal User user) {
+        if (message.getAuthor().equals(user)) {
+            messageService.delete(message);
+        }
     }
 }
