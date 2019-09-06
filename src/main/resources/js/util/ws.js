@@ -7,11 +7,11 @@ const handlers = []
 
 export function connect() {
     stompClient = Stomp.over(function () {
-        return new SockJS('/gs-guide-websocket')
+        return new SockJS('/sarafan-websocket')
     })
     stompClient.debug = () => {}
     stompClient.connect({}, frame => {
-        stompClient.subscribe('/topic/activity', message => {
+        stompClient.subscribe('/user/queue/reply', message => {
             handlers.forEach(handler => handler(JSON.parse(message.body)))
         })
     })

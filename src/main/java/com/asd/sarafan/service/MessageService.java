@@ -11,6 +11,7 @@ import com.asd.sarafan.dto.ObjectType;
 import com.asd.sarafan.repo.MessageRepo;
 import com.asd.sarafan.repo.UserSubscriptionRepo;
 import com.asd.sarafan.util.WsSender;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +40,7 @@ public class MessageService {
 
     private final MessageRepo messageRepo;
     private final UserSubscriptionRepo userSubscriptionRepo;
-    private final BiConsumer<EventType, Message> wsSender;
+    private final TriConsumer<String, EventType, Message> wsSender;
 
     @Autowired
     public MessageService(MessageRepo messageRepo,
@@ -93,7 +95,16 @@ public class MessageService {
 
     public void delete(Message message) {
         messageRepo.delete(message);
-        wsSender.accept(EventType.REMOVE, message);
+
+        // Send info about deleted message via websocket back to the author
+        wsSender.accept(message.getAuthor().getId(), EventType.REMOVE, message);
+
+        // Send info about deleted message via websocket to every subscriber of the author
+        for (UserSubscription subscription : userSubscriptionRepo.findByChannel(message.getAuthor())) {
+            if (subscription.isActive()) {
+                wsSender.accept(subscription.getSubscriber().getId(), EventType.REMOVE, message);
+            }
+        }
     }
 
     public Message update(Message messageFromDb, Message message) throws IOException {
@@ -102,18 +113,34 @@ public class MessageService {
         fillMeta(messageFromDb);
         Message updatedMessage = messageRepo.save(messageFromDb);
 
-        wsSender.accept(EventType.UPDATE, updatedMessage);
+        // Send updated message via websocket back to the author
+        wsSender.accept(updatedMessage.getAuthor().getId(), EventType.UPDATE, updatedMessage);
+
+        // Send updated message via websocket to every subscriber of the author
+        for (UserSubscription subscription : userSubscriptionRepo.findByChannel(updatedMessage.getAuthor())) {
+            if (subscription.isActive()) {
+                wsSender.accept(subscription.getSubscriber().getId(), EventType.UPDATE, updatedMessage);
+            }
+        }
 
         return updatedMessage;
     }
 
-    public Message create(Message message, User user) throws IOException {
+    public Message create(Message message, User author) throws IOException {
         message.setCreationDate(LocalDateTime.now());
         fillMeta(message);
-        message.setAuthor(user);
+        message.setAuthor(author);
         Message updatedMessage = messageRepo.save(message);
 
-        wsSender.accept(EventType.CREATE, updatedMessage);
+        // Send created and updated message via websocket back to the author
+        wsSender.accept(author.getId(), EventType.CREATE, updatedMessage);
+
+        // Send created message via websocket to every subscriber of the author
+        for (UserSubscription subscription : userSubscriptionRepo.findByChannel(author)) {
+            if (subscription.isActive()) {
+                wsSender.accept(subscription.getSubscriber().getId(), EventType.CREATE, updatedMessage);
+            }
+        }
 
         return updatedMessage;
     }

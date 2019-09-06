@@ -6,6 +6,7 @@ import com.asd.sarafan.dto.WsEventDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +23,12 @@ public class WsSender {
         this.mapper = mapper;
     }
 
-    public <T> BiConsumer<EventType, T> getSender(ObjectType objectType, Class view) {
+    public <T> TriConsumer<String, EventType, T> getSender(ObjectType objectType, Class view) {
         ObjectWriter writer = mapper
                 .setConfig(mapper.getSerializationConfig())
                 .writerWithView(view);
 
-        return (EventType eventType, T payload) -> {
+        return (String username, EventType eventType, T payload) -> {
             String value;
 
             try {
@@ -36,8 +37,9 @@ public class WsSender {
                 throw new RuntimeException(e);
             }
 
-            template.convertAndSend(
-                    "/topic/activity",
+            template.convertAndSendToUser(
+                    username,
+                    "/queue/reply",
                     new WsEventDto(objectType, eventType, value)
             );
         };
