@@ -28,31 +28,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry config) {
-        config.addEndpoint("/sarafan-websocket")
-                .setHandshakeHandler(new DefaultHandshakeHandler() {
-                    @Override
-                    protected Principal determineUser(ServerHttpRequest request,
-                                                      WebSocketHandler wsHandler,
-                                                      Map<String, Object> attributes) {
-
-                        // Making "username" for websockets = id of user
-                        // by default username for websockets == principal.toString() == user.toString()
-                        //   e.g. username = "User(id=100008869919267898123, name=a b)"
-
-                        OAuth2Authentication oauth2 = (OAuth2Authentication) request.getPrincipal();
-
-                        User user = (User) (oauth2 == null ? null : oauth2.getPrincipal());
-
-                        final String userId = user == null ? "0" : user.getId();
-
-                        return new Principal() {
-                            @Override
-                            public String getName() {
-                                return userId;
-                            }
-                        };
-                    }
-                })
-                .withSockJS();
+        config.addEndpoint("/sarafan-websocket").withSockJS();
     }
 }

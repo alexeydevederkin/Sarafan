@@ -35,12 +35,12 @@ public class CommentService {
         User authorOfParentMessage = parentMessage.getAuthor();
 
         // Send created comment via websocket to the author of parent message
-        wsSender.accept(authorOfParentMessage.getId(),  EventType.CREATE, commentFromDb);
+        wsSender.accept(authorOfParentMessage.toString(),  EventType.CREATE, commentFromDb);
 
         // Send created message via websocket to every user that can view parent message
         for (UserSubscription subscription : userSubscriptionRepo.findByChannel(authorOfParentMessage)) {
             if (subscription.isActive()) {
-                wsSender.accept(subscription.getSubscriber().getId(),  EventType.CREATE, commentFromDb);
+                wsSender.accept(subscription.getSubscriber().toString(),  EventType.CREATE, commentFromDb);
             }
         }
 

@@ -97,12 +97,12 @@ public class MessageService {
         messageRepo.delete(message);
 
         // Send info about deleted message via websocket back to the author
-        wsSender.accept(message.getAuthor().getId(), EventType.REMOVE, message);
+        wsSender.accept(message.getAuthor().toString(), EventType.REMOVE, message);
 
         // Send info about deleted message via websocket to every subscriber of the author
         for (UserSubscription subscription : userSubscriptionRepo.findByChannel(message.getAuthor())) {
             if (subscription.isActive()) {
-                wsSender.accept(subscription.getSubscriber().getId(), EventType.REMOVE, message);
+                wsSender.accept(subscription.getSubscriber().toString(), EventType.REMOVE, message);
             }
         }
     }
@@ -114,12 +114,12 @@ public class MessageService {
         Message updatedMessage = messageRepo.save(messageFromDb);
 
         // Send updated message via websocket back to the author
-        wsSender.accept(updatedMessage.getAuthor().getId(), EventType.UPDATE, updatedMessage);
+        wsSender.accept(updatedMessage.getAuthor().toString(), EventType.UPDATE, updatedMessage);
 
         // Send updated message via websocket to every subscriber of the author
         for (UserSubscription subscription : userSubscriptionRepo.findByChannel(updatedMessage.getAuthor())) {
             if (subscription.isActive()) {
-                wsSender.accept(subscription.getSubscriber().getId(), EventType.UPDATE, updatedMessage);
+                wsSender.accept(subscription.getSubscriber().toString(), EventType.UPDATE, updatedMessage);
             }
         }
 
@@ -133,12 +133,12 @@ public class MessageService {
         Message updatedMessage = messageRepo.save(message);
 
         // Send created and updated message via websocket back to the author
-        wsSender.accept(author.getId(), EventType.CREATE, updatedMessage);
+        wsSender.accept(author.toString(), EventType.CREATE, updatedMessage);
 
         // Send created message via websocket to every subscriber of the author
         for (UserSubscription subscription : userSubscriptionRepo.findByChannel(author)) {
             if (subscription.isActive()) {
-                wsSender.accept(subscription.getSubscriber().getId(), EventType.CREATE, updatedMessage);
+                wsSender.accept(subscription.getSubscriber().toString(), EventType.CREATE, updatedMessage);
             }
         }
 
